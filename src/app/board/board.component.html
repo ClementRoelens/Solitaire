@@ -1,0 +1,52 @@
+<main *ngIf="ready">
+    <section id="drawArea">
+        <div id="hiddenCardsArea" class="pile">
+            <img *ngIf="deck.length > 0" src="./assets/cards/cover.jpg" alt="Deck">
+        </div>
+        <div id="drawnCardsArea" class="pile">
+            <ng-container *ngIf="drawnCards.length > 0">
+                <img *ngFor="let card of deck" [src]="drawnCards[0].imagePath" alt="Carte à tirer">
+            </ng-container>
+        </div>
+    </section>
+    <section id="playArea">
+        <section id="piles">
+            <div class="pile">
+                <img *ngFor="let card of firstArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="pile">
+                <img *ngFor="let card of secondArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="pile">
+                <img *ngFor="let card of thirdArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="pile">
+                <img *ngFor="let card of fourthArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="pile">
+                <img *ngFor="let card of fifthArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="pile">
+                <img *ngFor="let card of sixthArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="pile">
+                <img *ngFor="let card of seventhArea" [src]="card.imagePath" alt="">
+            </div>
+        </section>
+        <section id="families">
+            <div class="family">
+                <img *ngFor="let card of heartsArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="family">
+                <img *ngFor="let card of diamondsArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="family">
+                <img *ngFor="let card of clubsArea" [src]="card.imagePath" alt="">
+            </div>
+            <div class="family">
+                <img *ngFor="let card of spadesArea" [src]="card.imagePath" alt="">
+            </div>
+        </section>
+    </section>
+
+</main>

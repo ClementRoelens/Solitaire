@@ -1,0 +1,68 @@
+* {
+    --card-width:140px;
+}
+
+main {
+    display:grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 3fr; 
+}
+
+#drawArea {
+    display: flex;
+    align-self: baseline;
+}
+
+.hiddenCard:first-child {
+    transform:none;
+}
+
+.hiddenCard{
+    position:relative;
+    transform:translate(calc(var(--card-width) - 3px));
+}
+
+#playArea {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 500px;
+    padding-right:20px;
+}
+
+#piles, #families {
+    /* border:solid black 1px; */
+    display:flex;
+    justify-content:space-between;
+}
+
+#piles{
+    width:65%;
+}
+
+#families {
+    width:35%;
+}
+
+.pile, .family{
+    display:flex;
+    height:210px;
+    width:150px;
+    border:solid 1px black;
+    border-radius:15px;
+    margin:auto 2px;
+}
+
+#playArea > .pile {
+    
+}
+
+img {
+    display:block;
+    margin:auto;
+    width:var(--card-width);
+    border-radius:15px;
+}
+
+
