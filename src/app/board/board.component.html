@@ -1,52 +1,44 @@
-<main *ngIf="ready">
+<main *ngIf="ready" class="drop-zone" cdkDropListGroup>
     <section id="drawArea">
-        <div id="hiddenCardsArea" class="pile">
-            <img *ngIf="deck.length > 0" src="./assets/cards/cover.jpg" alt="Deck">
+        <div id="hiddenCardsArea" class="pile" (click)="draw()">
+            <img *ngIf="deck.length > 0" src="./assets/cards/cover.jpg" alt="Deck" >
         </div>
-        <div id="drawnCardsArea" class="pile">
+        <div id="drawnCardsArea" cdkDropList [cdkDropListData]="drawnCards">
             <ng-container *ngIf="drawnCards.length > 0">
-                <img *ngFor="let card of deck" [src]="drawnCards[0].imagePath" alt="Carte à tirer">
+                <img class="drawn-card" *ngFor="let card of drawnCards, let i = index" 
+                [src]="card.imagePath" alt="Carte à tirer" 
+                cdkDrag (click)="enableDragMode(drawnCards, i,-1, true)">
+            </ng-container>
+            <ng-container *ngIf="dragging && (dragAreaNumber === -1)">
+                <div class="dragged-cards" (click)="disableDragMode(drawnCards)" 
+                    cdkDrag [cdkDragData]="draggedCards">
+                    <img [src]="draggedCards[0].imagePath" alt="">
+                </div>
             </ng-container>
         </div>
     </section>
-    <section id="playArea">
-        <section id="piles">
-            <div class="pile">
-                <img *ngFor="let card of firstArea" [src]="card.imagePath" alt="">
+    <section id="piles">
+        <div class="pile" *ngFor="let area of playAreaGroup, let areaIndex = index"
+            cdkDropList [cdkDropListData]="area" 
+            (cdkDropListDropped)="onDrop($event, true)">
+            <div class="card-drag-area" *ngFor="let card of area, let cardIndex = index">
+                <img [src]="card.faceUp ? card.imagePath : './assets/cards/cover.jpg'" alt=""
+                    (click)="enableDragMode(area, cardIndex, areaIndex, card.faceUp)">
             </div>
-            <div class="pile">
-                <img *ngFor="let card of secondArea" [src]="card.imagePath" alt="">
+            <ng-container *ngIf="dragging && (dragAreaNumber == areaIndex)">
+                <div class="dragged-cards" (click)="disableDragMode(area)" 
+                    cdkDrag [cdkDragData]="draggedCards">
+                    <img *ngFor="let draggedCard of draggedCards" [src]="draggedCard.imagePath" alt="">
+                </div>
+            </ng-container>
+        </div>
+    </section>
+    <section id="families">
+        <div class="family" *ngFor="let area of familiesAreaGroup" cdkDropList [cdkDropListData]="area" (cdkDropListDropped)="onDrop($event, false)">
+            <div *ngFor="let card of area">
+                <img  [src]="card.faceUp ? card.imagePath : './assets/cards/cover.jpg'" alt="">
             </div>
-            <div class="pile">
-                <img *ngFor="let card of thirdArea" [src]="card.imagePath" alt="">
-            </div>
-            <div class="pile">
-                <img *ngFor="let card of fourthArea" [src]="card.imagePath" alt="">
-            </div>
-            <div class="pile">
-                <img *ngFor="let card of fifthArea" [src]="card.imagePath" alt="">
-            </div>
-            <div class="pile">
-                <img *ngFor="let card of sixthArea" [src]="card.imagePath" alt="">
-            </div>
-            <div class="pile">
-                <img *ngFor="let card of seventhArea" [src]="card.imagePath" alt="">
-            </div>
-        </section>
-        <section id="families">
-            <div class="family">
-                <img *ngFor="let card of heartsArea" [src]="card.imagePath" alt="">
-            </div>
-            <div class="family">
-                <img *ngFor="let card of diamondsArea" [src]="card.imagePath" alt="">
-            </div>
-            <div class="family">
-                <img *ngFor="let card of clubsArea" [src]="card.imagePath" alt="">
-            </div>
-            <div class="family">
-                <img *ngFor="let card of spadesArea" [src]="card.imagePath" alt="">
-            </div>
-        </section>
+        </div>
     </section>
 
 </main>

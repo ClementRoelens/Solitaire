@@ -5,6 +5,8 @@ import { AppComponent } from './app.component';
 import { CardComponent } from './card/card.component';
 import { BoardComponent } from './board/board.component';
 import { AppRoutingModule } from './app-routing-module';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 
 @NgModule({
   declarations: [
@@ -14,7 +16,9 @@ import { AppRoutingModule } from './app-routing-module';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]

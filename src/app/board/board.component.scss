@@ -1,0 +1,100 @@
+main {
+    display: grid;
+    grid-template-rows: repeat(2, 50%);
+    grid-template-columns: 1fr 3fr;
+    align-items: start;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+#drawArea {
+    grid-area: 1/1/span 1/span 1;
+    display: flex;
+    align-self: baseline;
+}
+
+#drawnCardsArea{
+    margin-left:25px;
+}
+
+.drawn-card{
+    position:absolute;
+}
+
+#playArea {
+    grid-area: 1/2/span 2/span 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-right: 20px;
+}
+
+#piles,
+#families {
+    display: flex;
+    justify-content: space-between;
+    justify-self:center;
+}
+
+#piles {
+    grid-area: 1/2/span 1/span 1;
+    width:90%;
+}
+
+#families {
+    grid-area: 2/2/span 1/span 1;
+    align-self:center;
+    width:70%;
+}
+
+.pile,
+.family {
+    display: flex;
+    position: relative;
+    height: 210px;
+    width: var(--card-width);
+    height: calc(var(--card-width) * 1.39285);
+    border: solid 1px black;
+    border-radius: 15px;
+    margin: auto 2px;
+}
+
+$maxCard: 20;
+
+@for $i from 2 through $maxCard {
+    .pile img:nth-child(#{$i}),
+    .pile div:nth-child(#{$i}),
+    .cdk-drag-preview img:nth-child(#{$i}),
+    .cdk-drag-placeholder img:nth-child(#{$i}),
+    .family div:nth-child(#{$i}) {
+        position:absolute;
+        z-index: $i - 1;
+        top: calc(var(--pile-position-delta) * (#{$i} - 1));
+    }
+}
+
+#drawnCardsArea .dragged-cards,
+ .dragged-cards img, 
+ .cdk-drag-preview img {
+    width:calc(var(--card-width) + 20px);
+    transform : translateX(-10px);
+    z-index: 100;
+}
+
+.cdk-drag-placeholder img {
+    width: var(--card-width);
+    transform:translateX(0);
+}
+
+#families>.family {
+    margin: auto 20px;
+}
+
+img {
+    display: block;
+    margin: auto;
+    width: var(--card-width);
+    border-radius: 15px;
+}

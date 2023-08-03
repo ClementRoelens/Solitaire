@@ -1,76 +1,159 @@
 import { Component } from '@angular/core';
 import { Card } from '../card.model';
 import { Colors, Values, Families } from '../enum';
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { last } from 'rxjs';
 
 @Component({
   selector: 'app-board',
   templateUrl: './board.component.html',
-  styleUrls: ['./board.component.css']
+  styleUrls: ['./board.component.scss']
 })
 export class BoardComponent {
   deck!: Card[];
   drawnCards!: Card[];
 
-  firstArea!: Card[];
-  secondArea!: Card[];
-  thirdArea!: Card[];
-  fourthArea!: Card[];
-  fifthArea!: Card[];
-  sixthArea!: Card[];
-  seventhArea!: Card[];
+  playAreaGroup!: Card[][];
+  familiesAreaGroup!: Card[][];
 
-  heartsArea!: Card[];
-  diamondsArea!: Card[];
-  clubsArea!: Card[];
-  spadesArea!: Card[];
+  // heartsArea!: Card[];
+  // diamondsArea!: Card[];
+  // clubsArea!: Card[];
+  // spadesArea!: Card[];
 
-  ready!:boolean;
-  
+  draggedCards!: Card[];
+  dragging!: boolean;
+
+  ready!: boolean;
+  dragAreaNumber!: number;
+
   ngOnInit() {
     this.initializeArrays();
     this.createDeck();
     this.suffleDeck();
-    this.initializeGameArea();
+    this.initializeAreas();
+    this.dragging = false;
     this.ready = true;
+    this.dragAreaNumber = 0;
+    this.draw();
   }
 
   draw() {
-    for (let i = 0; i < 3; i++) {
-      this.moveCard(this.deck, this.drawnCards);
+    if (this.dragging && this.dragAreaNumber === -1){
+      this.disableDragMode(this.drawnCards);
+    }
+    if (this.deck.length > 0) {
+      for (let i = 0; i < 3; i++) {
+        this.moveCard(this.deck, this.drawnCards, true);
+      }
+    } else {
+      for (let i = 0, c = this.drawnCards.length; i < c; i++) {
+        this.moveCard(this.drawnCards, this.deck, false);
+      }
     }
   }
 
-  moveCard(fromPile: Card[], toPile: Card[]) {
-    toPile.unshift(fromPile[0]);
+  moveCard(fromPile: Card[], toPile: Card[], faceupCard: boolean) {
+    toPile.push(fromPile[0]);
     fromPile.shift();
+    if (faceupCard) {
+      fromPile[0].faceUp = true;
+    }
+  }
+
+  enableDragMode(area: Card[], cardIndex: number, areaIndex: number, authorized: boolean) {
+    if (!this.dragging && authorized) {
+      this.draggedCards = area.splice(cardIndex);
+      this.dragAreaNumber = areaIndex;
+      this.dragging = true;
+    }
+  }
+
+  disableDragMode(area: Card[]) {
+    this.draggedCards.forEach(card => {
+      area.push(card);
+    })
+    this.draggedCards = [];
+    this.dragging = false;
+  }
+
+  onDrop(event: CdkDragDrop<Card[]>, targetIsPile: boolean) {
+    const firstDraggedCard: Card = event.item.data[0];
+    const lastContainerCard: Card = event.container.data[event.container.data.length - 1];
+    const previousContainerData = event.previousContainer.data;
+
+    let targetArea;
+
+    if ((event.previousContainer !== event.container)
+      && (
+        (targetIsPile && this.canDropOnPile(firstDraggedCard, lastContainerCard, event.container.data.length))
+        ||
+        (!targetIsPile && this.canDropOnFamily(firstDraggedCard, lastContainerCard, event.container.data.length))
+      )) {
+      targetArea = event.container.data;
+      if (previousContainerData.length > 0) {
+        previousContainerData[previousContainerData.length - 1].faceUp = true;
+      }
+    } else {
+      targetArea = previousContainerData;
+    }
+    for (let i = 0, c = event.item.data.length; i < c; i++) {
+      transferArrayItem(event.item.data, targetArea, 0, targetArea.length);
+    }
+    this.draggedCards = [];
+    this.dragging = false;
+  }
+
+  canDropOnPile(firstDraggedCard: Card, lastContainerCard: Card, targetLength: number): boolean {
+    if (firstDraggedCard.value === 13 && targetLength === 0) {
+      return true;
+    } else if (targetLength > 0) {
+      if ((firstDraggedCard.value - lastContainerCard.value) === -1 && firstDraggedCard.color !== lastContainerCard.color) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  canDropOnFamily(firstDraggedCard: Card, lastContainerCard: Card, targetLength: number): boolean {
+    if (firstDraggedCard.value === 1 && targetLength === 0) {
+      return true;
+    } else if (targetLength > 0) {
+      if ((firstDraggedCard.value - lastContainerCard.value) === 1 && firstDraggedCard.family === lastContainerCard.family) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private initializeArrays() {
     this.deck = [];
     this.drawnCards = [];
-    this.firstArea = [];
-    this.secondArea = [];
-    this.thirdArea = [];
-    this.fourthArea = [];
-    this.fifthArea = [];
-    this.sixthArea = [];
-    this.seventhArea = [];
-    this.heartsArea = [];
-    this.diamondsArea = [];
-    this.clubsArea = [];
-    this.spadesArea = [];
 
+    this.draggedCards = [];
+    this.playAreaGroup = [];
+    this.familiesAreaGroup = [];
   }
 
-  private initializeGameArea() {
-    const gameAreas: Card[][] = [this.firstArea, this.secondArea, this.thirdArea, this.fourthArea, this.fifthArea, this.sixthArea, this.seventhArea];
+  private initializeAreas() {
+    // i permet de définir la limite de cartes à créer dans chaque pile
+    // j permet de naviguer parmi les piles
+    // k permet de créer chaque carte
     let i = 1;
-    gameAreas.forEach(area => {
-      for (let j = 0; j < i; j++) {
-        this.moveCard(this.deck, area);
+    for (let j = 0; j < 7; j++) {
+      this.playAreaGroup[j] = [];
+      for (let k = 0; k < i; k++) {
+        this.moveCard(this.deck, this.playAreaGroup[j], false);
       }
       i++;
+    }
+    this.playAreaGroup.forEach(area => {
+      area[area.length - 1].faceUp = true;
     });
+
+    for (let j = 0; j < 4; j++) {
+      this.familiesAreaGroup[j] = [];
+    }
   }
 
   private createDeck() {

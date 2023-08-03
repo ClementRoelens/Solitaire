@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+
+:root {
+    --card-width: 140px;
+    --pile-position-delta: 30px;
+
+}
+
+body,
+html {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    /* Les scrollbars verticales apparaissent en mettant 100vh... */
+    /* height:calc(100vh - 17px); */
+    height: 100vh;
+}
+
+app-root,
+app-board {
+    display: block;
+    height: 100%;
+
+}
