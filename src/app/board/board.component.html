@@ -33,6 +33,7 @@
             </ng-container>
         </div>
     </section>
+    <button mat-raised-button (click)="restart()">Recommencer une partie</button>
     <section id="families">
         <div class="family" *ngFor="let area of familiesAreaGroup" cdkDropList [cdkDropListData]="area" (cdkDropListDropped)="onDrop($event, false)">
             <div *ngFor="let card of area">

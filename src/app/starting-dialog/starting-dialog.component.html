@@ -1,0 +1,5 @@
+<div mat-dialog-content>Cliquez sur une carte pour pouvoir la déplacer elle et les cartes qui la suivent</div>
+<div mat-dialog-actions>
+    <mat-checkbox [(ngModel)]="isChecked">Ne plus montrer</mat-checkbox>
+    <button mat-raised-button mat-dialog-close (click)="dontShowAgain()">Fermer</button>
+</div>

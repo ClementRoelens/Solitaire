@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Card } from '../card.model';
 import { Colors, Values, Families } from '../enum';
-import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { last } from 'rxjs';
+import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
+import { MatDialog } from '@angular/material/dialog';
+import { StartingDialogComponent } from '../starting-dialog/starting-dialog.component';
 
 @Component({
   selector: 'app-board',
@@ -16,16 +17,13 @@ export class BoardComponent {
   playAreaGroup!: Card[][];
   familiesAreaGroup!: Card[][];
 
-  // heartsArea!: Card[];
-  // diamondsArea!: Card[];
-  // clubsArea!: Card[];
-  // spadesArea!: Card[];
-
   draggedCards!: Card[];
   dragging!: boolean;
 
   ready!: boolean;
   dragAreaNumber!: number;
+
+constructor(private dialog:MatDialog){}
 
   ngOnInit() {
     this.initializeArrays();
@@ -36,6 +34,12 @@ export class BoardComponent {
     this.ready = true;
     this.dragAreaNumber = 0;
     this.draw();
+
+    if (!localStorage.getItem("dontShowAgain")){
+      let dialogRef = this.dialog.open(StartingDialogComponent,{
+        width : '30%'
+      });
+    }
   }
 
   draw() {
@@ -124,6 +128,18 @@ export class BoardComponent {
       }
     }
     return false;
+  }
+
+  restart(){
+    this.ready = false;
+    this.initializeArrays();
+    this.createDeck();
+    this.suffleDeck();
+    this.initializeAreas();
+    this.dragging = false;
+    this.ready = true;
+    this.dragAreaNumber = 0;
+    this.draw();
   }
 
   private initializeArrays() {

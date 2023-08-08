@@ -1,0 +1,13 @@
+.mdc-dialog__content {
+    font-size: 2em;
+    line-height: 1.2em;
+    text-align: center;
+    padding: 35px;
+}
+
+.mat-mdc-dialog-actions{
+    display: flex;
+    justify-content: space-around;
+    width: 50%;
+    margin: 0 auto 15px auto;
+}
